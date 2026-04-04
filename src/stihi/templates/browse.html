@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ meta.display_name }}{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">Главная</a> / {{ meta.display_name }}
+</div>
+
+<h1>{{ meta.display_name }}</h1>
+<p style="color:var(--muted); margin-bottom:1.5rem;">
+  Скачано {{ meta.downloaded_count }} из {{ meta.poem_count }} стихотворений
+</p>
+
+{% if sections %}
+<div class="card">
+  <ul class="list">
+    {% for s in sections %}
+    <li>
+      <a href="/browse/{{ username }}/{{ s.dirname }}">{{ s.name }}</a>
+      <span class="count">{{ s.count }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% else %}
+<div class="empty">Нет разделов</div>
+{% endif %}
+{% endblock %}

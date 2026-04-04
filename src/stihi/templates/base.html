@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Стихи.ру{% endblock %} — Downloader</title>
+  <style>
+    :root {
+      --bg: #faf9f6;
+      --card: #fff;
+      --text: #2c2c2c;
+      --muted: #888;
+      --accent: #4a6fa5;
+      --accent-hover: #3a5a8a;
+      --border: #e0ddd8;
+      --green: #4a8a5a;
+      --red: #a54a4a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 0;
+    }
+    nav .container {
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    nav a { color: var(--accent); text-decoration: none; font-size: 0.95rem; }
+    nav a:hover { text-decoration: underline; }
+    nav .logo { font-size: 1.1rem; font-weight: bold; color: var(--text); }
+
+    h1 { font-size: 1.6rem; margin-bottom: 1rem; font-weight: normal; }
+    h2 { font-size: 1.2rem; margin-bottom: 0.8rem; font-weight: normal; color: var(--muted); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"], input[type="number"] {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem 0.8rem;
+      font-family: inherit;
+      font-size: 1rem;
+      width: 100%;
+      background: var(--bg);
+    }
+    input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
+    label { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; color: var(--muted); }
+
+    .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.6rem 1.5rem;
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--accent-hover); }
+
+    .list { list-style: none; }
+    .list li {
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .list li:last-child { border-bottom: none; }
+    .list a { color: var(--accent); text-decoration: none; }
+    .list a:hover { text-decoration: underline; }
+    .list .count { color: var(--muted); font-size: 0.85rem; }
+
+    .breadcrumb {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .poem-text {
+      white-space: pre-wrap;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      padding: 1.5rem 0;
+    }
+    .poem-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+
+    .progress-bar {
+      background: var(--border);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    .progress-bar .fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+    .status { font-size: 0.95rem; color: var(--muted); }
+    .status.done { color: var(--green); }
+    .status.error { color: var(--red); }
+
+    .row { display: flex; gap: 1rem; align-items: end; }
+    .row .field { flex: 1; }
+
+    .empty { color: var(--muted); font-style: italic; padding: 2rem 0; text-align: center; }
+
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      .row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="/" class="logo">Стихи.ру Downloader</a>
+      <a href="/">Главная</a>
+    </div>
+  </nav>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

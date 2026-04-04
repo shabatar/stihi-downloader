@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stihi-downloader"
+version = "1.0.0"
+description = "Download and browse all poetry from a stihi.ru author profile"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+keywords = ["stihi.ru", "poetry", "scraper", "crawler"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+dependencies = [
+    "playwright>=1.40",
+    "beautifulsoup4>=4.12",
+    "rich>=13.0",
+    "flask>=3.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+
+[project.urls]
+Repository = "https://github.com/shabatar/stihi-downloader"
+
+[project.scripts]
+stihi = "stihi.__main__:main"
+stihi-web = "stihi.web:run_web"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+stihi = ["templates/*.html"]

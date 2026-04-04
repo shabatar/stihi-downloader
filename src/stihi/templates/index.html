@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<h1>Скачать стихи автора</h1>
+
+<form class="card" method="post" action="/preview" id="main-form">
+  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  {% if error %}
+  <div style="color:var(--red); margin-bottom:1rem;">{{ error }}</div>
+  {% endif %}
+  <div class="row">
+    <div class="field" style="flex:3">
+      <label for="username">Имя автора или ссылка на профиль</label>
+      <input type="text" id="username" name="username" placeholder="имя автора или https://stihi.ru/avtor/имя" required>
+    </div>
+    <div class="field">
+      <label for="delay_min">Задержка, сек</label>
+      <div class="row" style="gap:0.5rem">
+        <input type="number" name="delay_min" value="1.0" step="0.5" min="0.5" style="width:70px">
+        <span style="color:var(--muted)">—</span>
+        <input type="number" name="delay_max" value="3.0" step="0.5" min="1" style="width:70px">
+      </div>
+    </div>
+    <div class="field" style="flex:0">
+      <button type="submit" class="btn" id="preview-btn">Далее</button>
+    </div>
+  </div>
+</form>
+<script>
+document.getElementById('main-form').addEventListener('submit', function() {
+  const btn = document.getElementById('preview-btn');
+  btn.disabled = true;
+  btn.textContent = 'Загрузка...';
+  btn.style.opacity = '0.6';
+});
+</script>
+
+{% if authors %}
+<h2>Скачанные авторы</h2>
+<div class="card">
+  <ul class="list">
+    {% for a in authors %}
+    <li>
+      <a href="/browse/{{ a.username }}">{{ a.display_name }}</a>
+      <span class="count">{{ a.downloaded_count }} стихов</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% else %}
+<div class="empty">Пока ничего не скачано</div>
+{% endif %}
+{% endblock %}

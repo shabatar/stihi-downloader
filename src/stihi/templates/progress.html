@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Скачивание {{ username }}{% endblock %}
+{% block content %}
+<h1>Скачивание: <strong>{{ username }}</strong></h1>
+
+<div class="card" id="status-card">
+  <div id="author-name" style="font-size:1.1rem; margin-bottom:0.5rem;"></div>
+  <div class="status" id="phase">Подключение...</div>
+  <div class="progress-bar"><div class="fill" id="bar" style="width:0%"></div></div>
+  <div class="status" id="counts"></div>
+  <div class="status" id="current-poem" style="margin-top:0.5rem;"></div>
+</div>
+
+<div style="margin-top:1rem; display:flex; gap:1rem;">
+  <form method="post" action="/stop/{{ username }}" id="stop-form">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="btn" id="stop-btn"
+            style="background:var(--red);">Остановить</button>
+  </form>
+  <a href="/browse/{{ username }}" class="btn" id="browse-btn" style="display:none;">Открыть</a>
+</div>
+
+<div id="error-msg" class="card status error" style="display:none;"></div>
+
+<script>
+const es = new EventSource("/api/progress/{{ username }}");
+const stopBtn = document.getElementById("stop-btn");
+const stopForm = document.getElementById("stop-form");
+const browseBtn = document.getElementById("browse-btn");
+
+es.onmessage = function(e) {
+  const d = JSON.parse(e.data);
+
+  if (d.author_name) {
+    document.getElementById("author-name").textContent = d.author_name;
+  }
+
+  document.getElementById("phase").textContent = d.phase || "";
+
+  if (d.total > 0) {
+    const pct = Math.round((d.progress / d.total) * 100);
+    document.getElementById("bar").style.width = pct + "%";
+    document.getElementById("counts").textContent = d.progress + " / " + d.total;
+  }
+
+  if (d.current) {
+    document.getElementById("current-poem").textContent = d.current;
+  }
+
+  if (d.status === "done") {
+    finish("done", "Готово!");
+  }
+
+  if (d.status === "stopped") {
+    finish("done", d.phase || "Остановлено");
+    document.getElementById("bar").style.background = "var(--muted)";
+  }
+
+  if (d.status === "error") {
+    document.getElementById("error-msg").style.display = "block";
+    document.getElementById("error-msg").textContent = "Ошибка: " + (d.error || "неизвестная");
+    finish("error", "Ошибка");
+  }
+
+  if (d.status === "unknown") {
+    document.getElementById("phase").textContent = "Загрузка не найдена";
+    stopForm.style.display = "none";
+    es.close();
+  }
+};
+
+function finish(cls, text) {
+  document.getElementById("phase").className = "status " + cls;
+  document.getElementById("phase").textContent = text;
+  document.getElementById("current-poem").textContent = "";
+  stopForm.style.display = "none";
+  browseBtn.style.display = "inline-block";
+  es.close();
+}
+</script>
+{% endblock %}

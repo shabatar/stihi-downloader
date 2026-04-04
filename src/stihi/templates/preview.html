@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ display_name }}{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">Главная</a> / Предпросмотр
+</div>
+
+<h1>{{ display_name }}</h1>
+<p style="color:var(--muted); margin-bottom:1.5rem;">
+  Всего произведений: {{ poem_count }}
+</p>
+
+<form method="post" action="/download">
+  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="username" value="{{ username }}">
+  <input type="hidden" name="delay_min" value="{{ delay_min }}">
+  <input type="hidden" name="delay_max" value="{{ delay_max }}">
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+      <h2 style="margin:0">Что скачать</h2>
+      <div style="font-size:0.85rem;">
+        <a href="#" id="select-all">Выбрать все</a> /
+        <a href="#" id="select-none">Снять все</a>
+      </div>
+    </div>
+
+    <ul class="list">
+      <li>
+        <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; flex:1;">
+          <input type="checkbox" name="include_main" value="1" checked
+                 class="source-check" style="width:18px; height:18px;">
+          <span>Основной список <span style="color:var(--muted)">(последние стихи)</span></span>
+        </label>
+        <span class="count">~{{ main_count }}</span>
+      </li>
+
+      {% for book in books %}
+      <li>
+        <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; flex:1;">
+          <input type="checkbox" name="books" value="{{ book.book_id }}" checked
+                 class="source-check" style="width:18px; height:18px;">
+          <span>{{ book.name }}</span>
+        </label>
+        <span class="count">{{ book.poem_count }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div style="margin-top:1rem; display:flex; gap:1rem; align-items:center;">
+    <button type="submit" class="btn" id="download-btn">Скачать выбранное</button>
+    <span id="total-label" style="color:var(--muted); font-size:0.9rem;"></span>
+  </div>
+</form>
+
+<script>
+const checks = document.querySelectorAll('.source-check');
+const totalLabel = document.getElementById('total-label');
+const dlBtn = document.getElementById('download-btn');
+const counts = [{{ main_count }}{% for b in books %}, {{ b.poem_count }}{% endfor %}];
+
+function updateTotal() {
+  let total = 0;
+  checks.forEach((cb, i) => { if (cb.checked) total += counts[i]; });
+  const any = total > 0;
+  totalLabel.textContent = any ? '~' + total + ' стихов' : '';
+  dlBtn.disabled = !any;
+  dlBtn.style.opacity = any ? '1' : '0.4';
+}
+
+checks.forEach(cb => cb.addEventListener('change', updateTotal));
+updateTotal();
+
+document.getElementById('select-all').addEventListener('click', e => {
+  e.preventDefault(); checks.forEach(cb => cb.checked = true); updateTotal();
+});
+document.getElementById('select-none').addEventListener('click', e => {
+  e.preventDefault(); checks.forEach(cb => cb.checked = false); updateTotal();
+});
+</script>
+{% endblock %}

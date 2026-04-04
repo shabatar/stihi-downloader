@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ section_name }}{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">Главная</a> /
+  <a href="/browse/{{ username }}">{{ meta.display_name }}</a> /
+  {{ section_name }}
+</div>
+
+<h1>{{ section_name }}</h1>
+<p style="color:var(--muted); margin-bottom:1.5rem;">{{ poems | length }} стихотворений</p>
+
+{% if poems %}
+<div class="card">
+  <ul class="list">
+    {% for p in poems %}
+    <li>
+      <a href="/poem/{{ username }}/{{ section_dir }}/{{ p.filename }}">{{ p.title }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% else %}
+<div class="empty">Пусто</div>
+{% endif %}
+{% endblock %}
